@@ -8,14 +8,26 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
+  //https://coolors.co/e83151-eaf8bf-31e871-177e89-001d4a
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      theme: ThemeData.from(
+        colorScheme: const ColorScheme(
+          background: Color(0xffeaf8bf),
+          onBackground: Color(0xff001d4a),
+          brightness: Brightness.light,
+          error: Color(0xffe83151),
+          onError: Color(0xffe83151),
+          primary: Color(0xff001d4a),
+          onPrimary: Color.fromARGB(255, 230, 240, 255),
+          secondary: Color(0xff177e89),
+          onSecondary: Color(0xff177e89),
+          surface: Color(0xffeaf8bf),
+          onSurface: Color(0xffeaf8bf),
+        ),
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -51,8 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[LineChartSample9()],
+          children: <Widget>[ElevatedButton(onPressed: () {}, child: const Text("Import CSV"))],
         ),
       ),
     );
