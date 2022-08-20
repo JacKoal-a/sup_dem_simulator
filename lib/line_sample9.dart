@@ -109,7 +109,7 @@ class LineChartSample9 extends StatelessWidget {
                 return value.toInt() == 0;
               },
             ),
-            borderData: FlBorderData(show: true),
+            borderData: FlBorderData(show: false),
           ),
         ),
       ),

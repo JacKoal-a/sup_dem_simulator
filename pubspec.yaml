@@ -36,6 +36,10 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   fl_chart: ^0.55.0
+  
+  ml_dataframe: ^1.6.0
+  
+  ml_algo: ^16.15.2
 
 
 dev_dependencies:
