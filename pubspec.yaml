@@ -1,5 +1,5 @@
 name: sup_dem_simulator
-description: A new Flutter project.
+description: A boring Flutter project.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -38,9 +38,9 @@ dependencies:
   fl_chart: ^0.55.0
   
   ml_dataframe: ^1.6.0
-  
   ml_algo: ^16.15.2
-
+  
+  easy_sidemenu: ^0.3.1
 
 dev_dependencies:
   flutter_test:
@@ -65,8 +65,6 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
