@@ -19,26 +19,26 @@ class _ModelsState extends State<Models> with AutomaticKeepAliveClientMixin<Mode
         crossAxisSpacing: 5.0,
         mainAxisSpacing: 5.0,
       ),
-      children: [
+      children: const [
         Card(
-          child: Container(
-            child: Text("Model 1"),
+          child: SizedBox(
             width: 300,
             height: 300,
+            child: Text("Model 1"),
           ),
         ),
         Card(
-          child: Container(
-            child: Text("Model 1"),
+          child: SizedBox(
             width: 300,
             height: 300,
+            child: Text("Model 1"),
           ),
         ),
         Card(
-          child: Container(
-            child: Text("Model 1"),
+          child: SizedBox(
             width: 300,
             height: 300,
+            child: Text("Model 1"),
           ),
         ),
       ],
