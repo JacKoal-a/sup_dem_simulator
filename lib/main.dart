@@ -9,44 +9,18 @@ import 'package:ml_dataframe/ml_dataframe.dart';
 
 import 'package:ml_algo/ml_algo.dart';
 import 'package:sup_dem_simulator/pages/dashboard.dart';
+import 'package:sup_dem_simulator/pages/export.dart';
 
 void main() async {
-  test();
+  //test();
   runApp(const MyApp());
 }
 
 void test() async {
-  final data = <Iterable>[
-    ['feature 1', 'feature 2', 'feature 3', 'outcome'],
-    [5.0, 7.0, 6.0, 98.0],
-    [1.0, 2.0, 3.0, 10.0],
-    [10.0, 12.0, 31.0, -977.0],
-    [9.0, 8.0, 5.0, 0.0],
-    [4.0, 0.0, 1.0, 6.0],
-    [5.0, 7.0, 6.0, 98.0],
-    [1.0, 2.0, 3.0, 10.0],
-    [10.0, 12.0, 31.0, -977.0],
-    [9.0, 8.0, 5.0, 0.0],
-    [4.0, 0.0, 1.0, 6.0],
-    [5.0, 7.0, 6.0, 98.0],
-    [1.0, 2.0, 3.0, 10.0],
-    [10.0, 12.0, 31.0, -977.0],
-    [9.0, 8.0, 5.0, 0.0],
-    [4.0, 0.0, 1.0, 6.0],
-    [5.0, 7.0, 6.0, 98.0],
-    [1.0, 2.0, 3.0, 10.0],
-    [10.0, 12.0, 31.0, -977.0],
-    [9.0, 8.0, 5.0, 0.0],
-    [4.0, 0.0, 1.0, 6.0],
-    [5.0, 7.0, 6.0, 98.0],
-    [1.0, 2.0, 3.0, 10.0],
-    [10.0, 12.0, 31.0, -977.0],
-    [9.0, 8.0, 5.0, 0.0],
-    [4.0, 0.0, 1.0, 6.0],
-  ];
-  final samples = DataFrame(data, headerExists: true);
+  final samples = await fromCsv('assets/train1.csv', headerExists: true, columnDelimiter: ',');
+
   final regressor = LinearRegressor(
-    samples,
+    samples.shuffle(),
     'outcome',
     iterationsLimit: 100,
     learningRateType: LearningRateType.constant,
@@ -55,7 +29,7 @@ void test() async {
     interceptScale: 3.0,
   );
 
-  const pathToFile = './classifier.json';
+  const pathToFile = './benzoa.json';
 
   await regressor.saveAsJson(pathToFile);
 
@@ -63,7 +37,8 @@ void test() async {
   final json = await file.readAsString();
   final restoredRegressor = LinearRegressor.fromJson(json);
 
-  print('accuracy: ${restoredRegressor.assess(DataFrame(data.take(2), headerExists: true), MetricType.mape)}');
+  print(
+      'accuracy: ${100 - restoredRegressor.assess((await fromCsv("assets/train1.csv", headerExists: true, columnDelimiter: ',')), MetricType.mape)}');
 }
 
 class MyApp extends StatelessWidget {
@@ -85,7 +60,7 @@ class MyApp extends StatelessWidget {
           secondary: Color(0xff177e89),
           onSecondary: Color(0xfffcfff1),
           surface: Color(0xfffcfff1),
-          onSurface: Color(0xfffcfff1),
+          onSurface: Color.fromARGB(255, 151, 151, 151),
         ),
       ),
       home: const MyHomePage(title: 'Home Page'),
@@ -103,15 +78,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<GlobalKey<State<StatefulWidget>>> printKeys = [];
+
+  String dropdownvalue = 'Fuel Model';
+  var items = ['Fuel Model', 'Model 2'];
+  DataFrame samples = DataFrame([]);
+  List<double> outcomes = [];
+  List<List<String>> data = [];
+
   @override
   void initState() {
     super.initState();
   }
-
-  String dropdownvalue = 'Model 1';
-
-  // List of items in our dropdown menu
-  var items = ['Model 1', 'Model 2'];
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           itemBuilder: (context) => items
                               .map((e) => PopupMenuItem<String>(
                                     value: e,
-                                    child: Text(e),
+                                    child: Center(child: Text(e)),
                                   ))
                               .toList(),
                           child: InkWell(
@@ -240,15 +218,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: PageView(
               controller: page,
-              children: [
-                Dashboard(dropdownvalue),
-                const Center(
-                  child: Text(
-                    'Download',
-                    style: TextStyle(fontSize: 35),
-                  ),
-                ),
-              ],
+              children: [Dashboard(dropdownvalue, (List<List<String>> list) => setState(() => data = list)), Export(data)],
             ),
           ),
         ],
