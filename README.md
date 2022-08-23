@@ -1,16 +1,7 @@
-# sup_dem_simulator
+# Supply Demand Simulator
 
-A new Flutter project.
+<img title="" src="http://fil5id.altervista.org/sup_dem.png" alt="N|Solid" width="241" data-align="center">
 
-## Getting Started
+## About
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The main purpose of the project is to provide a simple interface to predict values of economic contexts 

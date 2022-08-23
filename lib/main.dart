@@ -115,6 +115,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(
                   height: 8,
                 ),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxHeight: 150,
+                    maxWidth: 150,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(
+                      'assets/logo.png',
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: ConstrainedBox(
