@@ -210,6 +210,18 @@ class _DashboardState extends State<Dashboard> with AutomaticKeepAliveClientMixi
         setState(() {
           widget.sendData(list);
         });
+        setState(() {
+          input = true;
+        });
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => _buildPopupDialog(
+              context,
+              const Text("Check out the generated report and the export section to download the pdf"),
+              "Report Generated",
+              Theme.of(context).colorScheme.primary),
+        );
       } catch (e) {
         setState(() {
           input = false;
@@ -221,15 +233,6 @@ class _DashboardState extends State<Dashboard> with AutomaticKeepAliveClientMixi
               context, const Text("Invalid CSV format\nPlease check your file and try again"), "Error", Theme.of(context).colorScheme.error),
         );
       }
-
-      setState(() {
-        input = true;
-      });
-
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => _buildPopupDialog(context, const Text("Done dude CSV"), "Done", Theme.of(context).colorScheme.primary),
-      );
     }
   }
 
