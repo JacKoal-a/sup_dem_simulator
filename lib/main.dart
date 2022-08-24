@@ -3,21 +3,16 @@ import 'package:easy_sidemenu/easy_sidemenu.dart';
 // ignore: implementation_imports
 import 'package:easy_sidemenu/src/global/global.dart';
 import 'package:flutter/material.dart';
-
-import 'dart:io';
 import 'package:ml_dataframe/ml_dataframe.dart';
-
-import 'package:ml_algo/ml_algo.dart';
 import 'package:sup_dem_simulator/pages/dashboard.dart';
 import 'package:sup_dem_simulator/pages/export.dart';
 
 void main() async {
-  //test();
   runApp(const MyApp());
 }
 /*
 void test() async {
-  final samples = await fromCsv('assets/train1.csv', headerExists: true, columnDelimiter: ',');
+  final samples = await fromCsv('assets/train2.csv', headerExists: true, columnDelimiter: ',');
 
   final regressor = LinearRegressor(
     samples.shuffle(),
@@ -29,7 +24,7 @@ void test() async {
     interceptScale: 3.0,
   );
 
-  const pathToFile = './benzoa.json';
+  const pathToFile = './building.json';
 
   await regressor.saveAsJson(pathToFile);
 
@@ -37,7 +32,8 @@ void test() async {
   final json = await file.readAsString();
   final restoredRegressor = LinearRegressor.fromJson(json);
 
-  print('accuracy: ${100 - restoredRegressor.assess((await fromCsv("assets/train1.csv", headerExists: true, columnDelimiter: ',')), MetricType.mape)}');
+  print(
+      'accuracy: ${100 - restoredRegressor.assess((await fromCsv("assets/train3.csv", headerExists: true, columnDelimiter: ',')), MetricType.mape)}');
 }*/
 
 class MyApp extends StatelessWidget {
@@ -46,6 +42,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData.from(
         colorScheme: const ColorScheme(
@@ -80,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<GlobalKey<State<StatefulWidget>>> printKeys = [];
 
   String dropdownvalue = 'Fuel Model';
-  var items = ['Fuel Model', 'Model 2'];
+  var items = ['Fuel Model', 'Construction Model'];
   DataFrame samples = DataFrame([]);
   List<double> outcomes = [];
   List<List<String>> data = [];
@@ -180,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                           ),
                                                         ]
                                                       : [
-                                                          const SizedBox(width: 80),
+                                                          const SizedBox(width: 8),
                                                           Icon(
                                                             Icons.arrow_drop_down_circle_outlined,
                                                             color: Theme.of(context).colorScheme.background,
@@ -229,7 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: PageView(
               controller: page,
-              children: [Dashboard(dropdownvalue, (List<List<String>> list) => setState(() => data = list)), Export(data)],
+              children: [Dashboard(dropdownvalue, (List<List<String>> list) => setState(() => data = list)), Export(data, dropdownvalue)],
             ),
           ),
         ],

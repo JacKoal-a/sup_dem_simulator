@@ -1,8 +1,12 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ml_algo/ml_algo.dart';
 import 'package:ml_dataframe/ml_dataframe.dart';
+import 'package:sup_dem_simulator/widgets/bar_chart.dart';
 import 'package:sup_dem_simulator/widgets/fuel_chart.dart';
 import 'package:sup_dem_simulator/widgets/mouse_scrollcontroller.dart';
 import '../widgets/pie_chart.dart';
@@ -16,26 +20,26 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
   final dynamic data = {
     "Fuel Model": {
-      "id": 1,
+      "id": 0,
       "name": "Fuel Model",
       "csv": "price, excise, inflation",
       "csv_desc": "price: Current fuel price\nexcise: Current excise duty\ninflation: Inflation rate",
       "desc":
-          "A Linear Regresson trained on fuel data that allows to predict a series of future prices based on given fuel prices, the excise duty applied and the inflation rate",
+          "A Linear Regressor trained on fuel data that allows to predict next years' prices based on given fuel prices, the excise duty applied and the inflation rate",
       "file": "assets/models/fuel_model.json",
       "accuracy": 99.37378,
       "samples": 25
     },
-    "Model 2": {
-      "id": 2,
-      "name": "Building Model",
-      "csv": "price, excise, inflation",
-      "csv_desc": "price: Current fuel price\nexcise: Current excise duty\ninflation: Inflation rate",
+    "Construction Model": {
+      "id": 1,
+      "name": "Construction Model",
+      "csv": "demand, damage, inflation",
+      "csv_desc": "price: Previous market value\ndamage: Caused damage  \ninflation: Inflation rate",
       "desc":
-          "A Linear Regresson trained on fuel data that allows to predict a series of future prices based on given fuel prices, the excise duty applied and the inflation rate",
-      "file": "assets/models/fuel_model.json",
-      "accuracy": 67.6826,
-      "samples": 100
+          "A Linear Regressor trained on real estate market's data that allows to predict the variation that occurs in the market value after the damage caused by a natural disaster",
+      "file": "assets/models/construction_model.json",
+      "accuracy": 90.6826,
+      "samples": 55
     }
   };
 }
@@ -43,14 +47,15 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> with AutomaticKeepAliveClientMixin<Dashboard> {
   dynamic model;
   final AdjustableScrollController _controller = AdjustableScrollController();
-  bool input = false;
-  List<double> outcomes = [], secondary = [];
+  List<bool> input = [false, false];
+  List<List<double>> outcomes = [[], []];
+  List<double> secondary = [];
   List<List<String>> list = [];
 
   @override
   Widget build(BuildContext context) {
-    model = widget.data[widget.model];
     super.build(context);
+    model = widget.data[widget.model];
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Scrollbar(
@@ -162,8 +167,8 @@ class _DashboardState extends State<Dashboard> with AutomaticKeepAliveClientMixi
               const SizedBox(
                 height: 20,
               ),
-              if (input) _generateChart(),
-              if (input) _generateTable(),
+              if (input[model["id"]]) _generateChart(),
+              if (input[model["id"]]) _generateTable(),
               const SizedBox(
                 height: 20,
               ),
@@ -179,6 +184,7 @@ class _DashboardState extends State<Dashboard> with AutomaticKeepAliveClientMixi
 
   Future<void> _pickCSV() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
+      initialDirectory: Directory.current.path,
       type: FileType.custom,
       allowedExtensions: ['csv'],
     );
@@ -189,34 +195,57 @@ class _DashboardState extends State<Dashboard> with AutomaticKeepAliveClientMixi
         final ml = await rootBundle.loadString(model["file"]);
         final restoredRegressor = LinearRegressor.fromJson(ml);
         final resultml = restoredRegressor.predict(samples);
+        outcomes[model["id"]] = [];
 
-        outcomes = [];
-        secondary = [];
-        resultml.rows.forEach(((element) => outcomes.add(element.first)));
-        samples.rows.forEach(((element) => secondary.add(element.first)));
+        resultml.rows.forEach(((element) => outcomes[model["id"]].add(element.first)));
+
         for (int i = 0; i < outcomes.length; i++) {
-          outcomes[i] = double.parse(outcomes[i].toStringAsFixed(5));
+          outcomes[model["id"]][i] = double.parse((outcomes[model["id"]][i]).toStringAsFixed(5));
+        }
+
+        if (model["id"] == 1) {
+          secondary = [];
+          for (var element in samples.rows) {
+            secondary.add(element.first);
+          }
         }
         list = [];
         List<String> h = samples.header.toList();
+
         h.add("outcome");
         list.add(h);
         for (int i = 0; i < samples.rows.length; i++) {
           List<String> row = [];
+          if (model["id"] == 0) {
+            for (int j = 0; j < samples.rows.elementAt(i).length; j++) {
+              if (j == 2) {
+                row.add((samples.rows.elementAt(i).elementAt(j) * 100).toStringAsFixed(2));
+              } else {
+                row.add(samples.rows.elementAt(i).elementAt(j).toString());
+              }
+            }
+          } else {
+            for (int j = 0; j < samples.rows.elementAt(i).length; j++) {
+              if (j == 0 || j == 1) {
+                row.add((samples.rows.elementAt(i).elementAt(j) * 10000).toStringAsFixed(2));
+              } else {
+                row.add(samples.rows.elementAt(i).elementAt(j).toString());
+              }
+            }
+          }
 
-          samples.rows.elementAt(i).toList().forEach((element) {
-            row.add(element.toString());
-          });
-          row.add(outcomes[i].toStringAsFixed(5));
+          if (model["id"] == 0) {
+            row.add(outcomes[model["id"]][i].toStringAsFixed(5));
+          } else {
+            row.add((outcomes[model["id"]][i] * 10000).toStringAsFixed(2));
+          }
           list.add(row);
         }
         setState(() {
           widget.sendData(list);
-        });
-        setState(() {
-          input = true;
-        });
 
+          input[model["id"]] = true;
+        });
         showDialog(
           context: context,
           builder: (BuildContext context) => _buildPopupDialog(
@@ -227,7 +256,7 @@ class _DashboardState extends State<Dashboard> with AutomaticKeepAliveClientMixi
         );
       } catch (e) {
         setState(() {
-          input = false;
+          input[model["id"]] = false;
         });
 
         showDialog(
@@ -259,14 +288,18 @@ class _DashboardState extends State<Dashboard> with AutomaticKeepAliveClientMixi
 
   Widget _generateChart() {
     return ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 800, maxHeight: 800),
+        constraints: BoxConstraints(maxWidth: model["id"] == 0 ? 800 : 1000, maxHeight: 800),
         child: Card(
             elevation: 4,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: FuelChart(secondary, outcomes),
+              child: model["id"] == 0 ? FuelChart(outcomes[model["id"]]) : BarChartSample2(getRandomString(32), secondary, outcomes[model["id"]]),
             )));
   }
+
+  static const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  final Random _rnd = Random();
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
   Widget _generateTable() {
     return Card(

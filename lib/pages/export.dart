@@ -9,7 +9,8 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 class Export extends StatefulWidget {
-  const Export(this.data, {Key? key}) : super(key: key);
+  const Export(this.data, this.model, {Key? key}) : super(key: key);
+  final String model;
   final List<List<String>> data;
   @override
   State<Export> createState() => _ExportState();
@@ -46,7 +47,8 @@ class _ExportState extends State<Export> with AutomaticKeepAliveClientMixin<Expo
                 ]))),
         build: (ct) => [
           pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
-            pw.Text("Report", style: pw.TextStyle(fontSize: 16, color: PdfColor.fromInt(Theme.of(context).colorScheme.primary.value))),
+            pw.Text("${widget.model} Report",
+                style: pw.TextStyle(fontSize: 16, color: PdfColor.fromInt(Theme.of(context).colorScheme.primary.value))),
             pw.Padding(padding: const pw.EdgeInsets.all(0.0), child: pw.Container(child: pw.Image(imageLogo), height: 50)),
           ]),
           pw.Divider(color: const PdfColor.fromInt(0)),

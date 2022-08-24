@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class _LineChart extends StatelessWidget {
-  _LineChart(this.excises, this.outcomes);
-  final List<double> excises, outcomes;
+  _LineChart(this.outcomes);
+  final List<double> outcomes;
   late BuildContext context;
   @override
   Widget build(BuildContext ct) {
@@ -47,12 +47,12 @@ class _LineChart extends StatelessWidget {
       isStrokeCapRound: true,
       dotData: FlDotData(show: false),
       belowBarData: BarAreaData(show: false),
-      spots: List.generate(excises.length, (index) => FlSpot((index + 1).toDouble(), outcomes[index])));
+      spots: List.generate(outcomes.length, (index) => FlSpot((index + 1).toDouble(), outcomes[index])));
 }
 
 class FuelChart extends StatefulWidget {
-  const FuelChart(this.excises, this.outcomes, {Key? key}) : super(key: key);
-  final List<double> excises, outcomes;
+  const FuelChart(this.outcomes, {Key? key}) : super(key: key);
+  final List<double> outcomes;
   @override
   State<StatefulWidget> createState() => FuelChartState();
 }
@@ -86,7 +86,7 @@ class FuelChartState extends State<FuelChart> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(right: 16.0, left: 16.0),
-                  child: _LineChart(widget.excises, widget.outcomes),
+                  child: _LineChart(widget.outcomes),
                 ),
               ),
               const SizedBox(
