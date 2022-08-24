@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:ml_algo/ml_algo.dart';
 import 'package:ml_dataframe/ml_dataframe.dart';
 import 'package:sup_dem_simulator/widgets/fuel_chart.dart';
+import 'package:sup_dem_simulator/widgets/mouse_scrollcontroller.dart';
 import '../widgets/pie_chart.dart';
 
 class Dashboard extends StatefulWidget {
@@ -17,7 +18,7 @@ class Dashboard extends StatefulWidget {
     "Fuel Model": {
       "id": 1,
       "name": "Fuel Model",
-      "csv": "| price | excise | inflation |",
+      "csv": "price, excise, inflation",
       "csv_desc": "price: Current fuel price\nexcise: Current excise duty\ninflation: Inflation rate",
       "desc":
           "A Linear Regresson trained on fuel data that allows to predict a series of future prices based on given fuel prices, the excise duty applied and the inflation rate",
@@ -27,23 +28,25 @@ class Dashboard extends StatefulWidget {
     },
     "Model 2": {
       "id": 2,
-      "name": "model 2",
-      "csv": "| price | excise | inflation |",
+      "name": "Building Model",
+      "csv": "price, excise, inflation",
       "csv_desc": "price: Current fuel price\nexcise: Current excise duty\ninflation: Inflation rate",
       "desc":
           "A Linear Regresson trained on fuel data that allows to predict a series of future prices based on given fuel prices, the excise duty applied and the inflation rate",
       "file": "assets/models/fuel_model.json",
-      "accuracy": 89.6826
+      "accuracy": 67.6826,
+      "samples": 100
     }
   };
 }
 
 class _DashboardState extends State<Dashboard> with AutomaticKeepAliveClientMixin<Dashboard> {
   dynamic model;
-  final ScrollController _controller = ScrollController();
+  final AdjustableScrollController _controller = AdjustableScrollController();
   bool input = false;
   List<double> outcomes = [], secondary = [];
   List<List<String>> list = [];
+
   @override
   Widget build(BuildContext context) {
     model = widget.data[widget.model];
@@ -276,11 +279,11 @@ class _DashboardState extends State<Dashboard> with AutomaticKeepAliveClientMixi
             children: [
               TableRow(
                 children: List.generate(
-                    list.first.length,
+                    list.first.length + 1,
                     (index) => Column(children: [
                           Padding(
                             padding: const EdgeInsets.all(4.0),
-                            child: Text(list.first[index], style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+                            child: Text(index == 0 ? "" : list.first[index - 1], style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
                           )
                         ])),
               ),
@@ -288,10 +291,10 @@ class _DashboardState extends State<Dashboard> with AutomaticKeepAliveClientMixi
                 list.length - 1,
                 (index) => TableRow(
                     children: List.generate(
-                        list.first.length,
+                        list.first.length + 1,
                         (index2) => Column(children: [
                               Text(
-                                list[index + 1][index2],
+                                index2 == 0 ? (index + 1).toString() : (list[index + 1][index2 - 1]),
                                 style: const TextStyle(
                                   fontSize: 14.0,
                                 ),
@@ -353,10 +356,6 @@ class _DashboardState extends State<Dashboard> with AutomaticKeepAliveClientMixi
           Text(
             "Training samples: ${model['samples']}",
             style: const TextStyle(fontSize: 18),
-          ),
-          const Text(
-            "Learning Rate: 1.0 constant",
-            style: TextStyle(fontSize: 18),
           ),
         ],
       ),

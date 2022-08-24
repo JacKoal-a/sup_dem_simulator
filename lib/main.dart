@@ -15,7 +15,7 @@ void main() async {
   //test();
   runApp(const MyApp());
 }
-
+/*
 void test() async {
   final samples = await fromCsv('assets/train1.csv', headerExists: true, columnDelimiter: ',');
 
@@ -37,8 +37,8 @@ void test() async {
   final json = await file.readAsString();
   final restoredRegressor = LinearRegressor.fromJson(json);
 
-  //print('accuracy: ${100 - restoredRegressor.assess((await fromCsv("assets/train1.csv", headerExists: true, columnDelimiter: ',')), MetricType.mape)}');
-}
+  print('accuracy: ${100 - restoredRegressor.assess((await fromCsv("assets/train1.csv", headerExists: true, columnDelimiter: ',')), MetricType.mape)}');
+}*/
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
